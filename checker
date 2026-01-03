@@ -1,0 +1,39 @@
+import requests
+import sys
+import os
+
+def check_website(url):
+    try:
+        response = requests.get(url, timeout=5)
+        print(f"[+] {url} is UP (Status Code: {response.status_code})")
+    except requests.exceptions.RequestException:
+        print(f"[-] {url} is DOWN or unreachable")
+
+def check_from_file(filename):
+    if not os.path.isfile(filename):
+        print("File not found.")
+        sys.exit(1)
+
+    with open(filename, "r") as file:
+        for line in file:
+            url = line.strip()
+            if url:
+                check_website(url)
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage:")
+        print("  python3 checker.py https://example.com")
+        print("  python3 checker.py sites.txt")
+        sys.exit(1)
+
+    target = sys.argv[1]
+
+    if target.endswith(".txt"):
+        check_from_file(target)
+    else:
+        check_website(target)
+
+if __name__ == "__main__":
+    main()
+
